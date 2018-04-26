@@ -14,20 +14,26 @@
 #include <iterator>
 #include <random>
 #include <vector>
+#include <iterator>
 
 using std::cout;
 using std::cin;
+using std::endl;
 using std::mt19937;
 using std::vector;
+using std::distance;
+using std::sort;
+using iterator = vector<int>::iterator;
+
 
 void
 randomNumber (int size, vector<int>& toSort);
 
 void 
-mergeSort (vector<int>& s, size_t first, size_t last);
+mergeSort (vector<int>& s, iterator first, iterator last);
 
 void
-merge (vector<int>& s, size_t first, size_t mid, size_t last);
+merge (vector<int>& s, iterator first, iterator mid, iterator last);
 
 void 
 quickSort (vector<int>& toSort);
@@ -46,13 +52,15 @@ main (int argc, char *argv[])
     vector<int> quickVec (mergeVec);
     vector<int> shellVec (mergeVec);
     vector<int> stdVec   (mergeVec);
-
-    for (const auto elem : mergeVec)
-        cout << elem << ", ";
-    cout << std::endl;
-    mergeSort (mergeVec, mergeVec.front(), mergeVec.back() );
-    for (const auto elem : mergeVec)
-        cout << elem << ", ";
+    
+    
+    
+    mergeSort (mergeVec, mergeVec.begin(), mergeVec.end() );
+    sort(stdVec.begin(), stdVec.end());
+    
+    cout << endl << "Equality: " << (mergeVec==stdVec);
+    //for (const auto elem : mergeVec)
+    //    cout << elem << ", ";
     
 }   
 
@@ -67,44 +75,60 @@ randomNumber (int size, vector<int>& toSort)
 }
 
 void 
-mergeSort (vector<int>& s, size_t first, size_t last)
+mergeSort (vector<int>& s, iterator first, iterator last)
 {
-    if (last - first > 1)
+    if (distance (first, last) > 1)
     {
-        size_t mid = s[first] + (s[last] - s[first]) / 2;
+        //cout << distance(first , last) << std::endl;
+        iterator mid = first + (distance (first, last) / 2);
+        //cout << "first=" << *first << " mid=" << *mid <<" last=" << *(--last)  << endl;
+        
         mergeSort (s, first, mid);
+        
         mergeSort (s, mid, last);
+        
         merge (s, first, mid, last);
+         
     }
 }
 
 void
-merge (vector<int>& s, size_t first, size_t mid, size_t last)
+merge (vector<int>& s, iterator first, iterator mid, iterator last)
 {
     vector<int> temp;
-    size_t perm_mid = mid;
+    iterator perm_first = s.begin() + distance (s.begin(), first);
+    iterator perm_mid   = s.begin() + distance (s.begin(), mid  );
     while (temp.size() != s.size())
     {
         if (first == perm_mid)
         {
             while (mid != last)
-                temp.push_back (mid++);
+            {
+                temp.push_back (*mid);
+                ++mid;
+            }
+            break;
         }
-        if (mid == last)
+        else if (mid == last)
         {
             while (first != perm_mid)
-                temp.push_back (first++);
+            {
+                temp.push_back (*first);
+                ++first;
+            }
+            break;
         }
-        if (s[first] < s[mid])
+        if (*first < *mid)
         {
-            temp.push_back (s[first]);
+            temp.push_back (*first);
             ++first;
         } 
         else 
         {
-            temp.push_back (s[mid]);
+            temp.push_back (*mid);
             ++mid;
         }
     }
-    s = temp;
+    iterator copyToSrc = (s.begin() + distance (s.begin(), perm_first));
+    std::copy (temp.begin(), temp.end(), copyToSrc);
 }
