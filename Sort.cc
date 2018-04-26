@@ -1,5 +1,5 @@
 /*
-  Filename   : ListDriver.cc
+  Filename   : Sort.cc
   Author     : Matt Fossett
   Course     : CSCI 362-01
   Assignment : N/A
@@ -15,6 +15,8 @@
 #include <random>
 #include <vector>
 #include <iterator>
+#include <algorithm>
+#include "Timer.hpp"
 
 using std::cout;
 using std::cin;
@@ -53,13 +55,23 @@ main (int argc, char *argv[])
     vector<int> shellVec (mergeVec);
     vector<int> stdVec   (mergeVec);
     
-    
-    
+    Timer<> t;
+    double times[4];
+
+    t.start();
     mergeSort (mergeVec, mergeVec.begin(), mergeVec.end() );
-    sort(stdVec.begin(), stdVec.end());
+    t.stop();
+    times[0] = t.getElapsedMs(); 
     
-    cout << endl << "Equality: " << (mergeVec==stdVec);
-    //for (const auto elem : mergeVec)
+    t.start();
+    sort(stdVec.begin(), stdVec.end());
+    t.stop();
+    times[3] = t.getElapsedMs();
+
+    cout << "timeMerge: " << times[0] << endl;
+    cout << "timeStd  : " << times[3] << endl;
+
+    cout << endl << "Equality: ";    //for (const auto elem : mergeVec)
     //    cout << elem << ", ";
     
 }   
@@ -131,4 +143,10 @@ merge (vector<int>& s, iterator first, iterator mid, iterator last)
     }
     iterator copyToSrc = (s.begin() + distance (s.begin(), perm_first));
     std::copy (temp.begin(), temp.end(), copyToSrc);
+}
+
+void 
+quickSort (vector<int>& toSort)
+{
+    
 }
