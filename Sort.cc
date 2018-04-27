@@ -38,8 +38,11 @@ merge (vector<int>& s, iterator first, iterator mid, iterator last);
 void
 quickSort (vector<int>& toSort, iterator first, iterator last);
 
+void
+insertionSort (vector<int> toSort, iterator left, iterator right);
+
 iterator 
-partition (vector<int>& toSort, iterator first, iterator last);
+findPivot (vector<int>& toSort, iterator first, iterator last);
 
 void
 shellSort (vector<int>& toSort);
@@ -69,10 +72,16 @@ main (int argc, char* argv[])
   t.stop ();
   times[3] = t.getElapsedMs ();
 
+  t.start ();
+  quickSort (quickVec, quickVec.begin(), quickVec.end() );
+  t.stop ();
+  times[1] = t.getElapsedMs();
+
   cout << "timeMerge: " << times[0] << endl;
+  cout << "timeQuick: " << times[1] << endl;
   cout << "timeStd  : " << times[3] << endl;
 
-  cout << endl << "Equality:" <<( mergeVec == stdVec); //for (const auto elem : mergeVec)
+  cout << endl << "Equality:" <<( quickVec == stdVec); //for (const auto elem : mergeVec)
                                 //    cout << elem << ", ";
 }
 
@@ -136,21 +145,34 @@ quickSort (vector<int>& toSort, iterator left, iterator right)
 {
   if (distance (left, right) > 20)
   {
-    iterator pivot = partition (toSort, left, right);
+    iterator pivot = findPivot (toSort, left, (--right) );
     std::swap (pivot, --right);
     pivot = --right;
+    iterator i = left, j = --right;
     while ( true )  
     {
-      //if () 
+      while (*i < *pivot)
+        ++i;
+      while (*pivot < *j)
+        ++j;
+      if (i < j)
+        std::swap (i, j);
+      else 
+        break;
     }
 
     quickSort (toSort, left, pivot);
     quickSort (toSort, ++pivot, right);
+  } 
+  else 
+  {
+    insertionSort (toSort, left, right);
   }
 }
+
 //returns iterator pointing to median value of first, last and the median of first & last
 iterator 
-partition (vector<int>& toSort, iterator first, iterator last)
+findPivot (vector<int>& toSort, iterator first, iterator last)
 {
   iterator mid = toSort.begin() + (distance (first, last)) / 2;
   if (*first < *mid && *first > *last)
@@ -159,4 +181,10 @@ partition (vector<int>& toSort, iterator first, iterator last)
     return mid;
   else 
     return last;
+}
+
+void
+insertionSort (vector<int> toSort, iterator left, iterator right)
+{
+    
 }
