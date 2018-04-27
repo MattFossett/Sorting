@@ -36,7 +36,10 @@ void
 merge (vector<int>& s, iterator first, iterator mid, iterator last);
 
 void
-quickSort (vector<int>& toSort);
+quickSort (vector<int>& toSort, iterator first, iterator last);
+
+iterator 
+partition (vector<int>& toSort, iterator first, iterator last);
 
 void
 shellSort (vector<int>& toSort);
@@ -129,6 +132,31 @@ merge (vector<int>& s, iterator first, iterator mid, iterator last)
 }
 
 void
-quickSort (vector<int>& toSort)
+quickSort (vector<int>& toSort, iterator left, iterator right)
 {
+  if (distance (left, right) > 20)
+  {
+    iterator pivot = partition (toSort, left, right);
+    std::swap (pivot, --right);
+    pivot = --right;
+    while ( true )  
+    {
+      //if () 
+    }
+
+    quickSort (toSort, left, pivot);
+    quickSort (toSort, ++pivot, right);
+  }
+}
+//returns iterator pointing to median value of first, last and the median of first & last
+iterator 
+partition (vector<int>& toSort, iterator first, iterator last)
+{
+  iterator mid = toSort.begin() + (distance (first, last)) / 2;
+  if (*first < *mid && *first > *last)
+    return first;
+  else if (*mid < *first && *mid > *last)
+    return mid;
+  else 
+    return last;
 }
