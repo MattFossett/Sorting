@@ -80,23 +80,18 @@ main (int argc, char* argv[])
   t.stop ();
   times[3] = t.getElapsedMs ();
 
-  cout << "\n[";
-  for (int e : quickVec)
-    cout << " " << e;
-  cout << " ]";
-
   t.start ();
   quickSort (quickVec, quickVec.begin(), quickVec.end() );
   t.stop ();
   times[1] = t.getElapsedMs();  
   
-  
+  /*
   cout << "\n[";
   for (int e : quickVec)
     cout << " " << e;
-
+*/
   cout << " ]\n";
-  printStuff ( stdVec);
+  //printStuff ( stdVec);
   cout << "timeMerge: " << times[0] << endl;
   cout << "timeQuick: " << times[1] << endl;
   cout << "timeStd  : " << times[3] << endl;
@@ -107,12 +102,16 @@ main (int argc, char* argv[])
 
 
 
-  cout << "\n insort test";
+  cout << "\n in sort test";
   vector<int> smol;
-  smol.push_back(1);
+ //smol.push_back(1);
   smol.push_back(2);
   insertionSort(smol, smol.begin(), smol.end());
-  printStuff(smol);
+ // printStuff(smol);
+
+
+  printStuff (quickVec);
+  printStuff (stdVec);
 
 }
 
@@ -176,29 +175,23 @@ quickSort (vector<int>& toSort, iterator left, iterator right)
 {
   if (distance (left, right) > 20)
   {
-    iterator last = right-1;
-    iterator pivot = findPivot (toSort, left, last );
-    cout << endl << "first="  << *left << endl;
-    cout << endl << "last-1=" << *last << endl;
-    cout << endl << "median=" << *(toSort.begin() + (distance (left, right)/2)     ) << endl;
-    cout << endl << "Pivot="  << *pivot << endl;
-    std::swap (*pivot, *last);
-    iterator i = left, j = last-1;
-    cout << 1;
-    printStuff (toSort);
+   // iterator last = right-1;
+    iterator pivot = findPivot (toSort, left, right-1 );
+   
+    iterator i = left, j = pivot-1;
     while ( true )  
     {
-      while (*i < *last ) 
+      while (*i < *pivot ) 
         ++i;
-      while ( *j > *last )
+      while ( *j > *pivot )
         --j;
       if (distance (i,j) > 0)
         std::swap (*i, *j);
       else 
         break;
     }
-    std::swap (*i, *last);
-    quickSort (toSort, left, (i));
+    std::swap (*i, *pivot);
+    quickSort (toSort, left, i);
     quickSort (toSort, (i+1), right);
   } 
   else 
@@ -207,15 +200,18 @@ quickSort (vector<int>& toSort, iterator left, iterator right)
 
 //returns iterator pointing to median value of first, last and the median of first & last
 iterator 
-findPivot (vector<int>& toSort, iterator first, iterator last)
+findPivot (vector<int>& toSort, iterator left, iterator right)
 {
-  iterator mid = toSort.begin() + (distance (first, last) / 2);
-  if ((*first < *mid && *first > *last) || (*first > *last && *first < *mid))
-    return first;
-  else if ((*mid < *first && *mid > *last) || (*mid > *first && *mid < *last))
-    return mid;
-  else 
-    return last;
+  iterator center = toSort.begin() + (distance (left, right) / 2);
+  if (*center < *left)
+    std::swap (*left, *center);
+  if (*right < *left )
+    std::swap (*left, *right);
+  if (*right < *center)
+    std::swap (*center, *right);
+  std::swap (*center, *right);
+  return right;
+
 }
 
 void
@@ -224,7 +220,7 @@ insertionSort (vector<int> toSort, iterator left, iterator right)
    iterator front = left;
    iterator j;
    ++left;
-   while (left != right)
+   while (left < right)
    {
       int key = *left;
       j = (left-1);
