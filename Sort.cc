@@ -50,8 +50,8 @@ quickSort (vector<int>& toSort, iterator first, iterator last);
 void
 insertionSort (vector<int>& toSort, size_t left, size_t right);
 
-iterator 
-findPivot (vector<int>& toSort, iterator first, iterator last);
+iterator
+findPivot (iterator first, iterator last);
 
 void
 shellSort (vector<int>& toSort, iterator first, iterator last);
@@ -87,30 +87,30 @@ main (int argc, char* argv[])
   t.start ();
   shellSort (shellVec, shellVec.begin(), shellVec.end() );
   t.stop ();
-  times[2] = t.getElapsedMs();  
+  times[2] = t.getElapsedMs();
 
   //printStuff (quickVec);
   t.start ();
   quickSort (quickVec, quickVec.begin(), quickVec.end() );
   t.stop ();
-  times[1] = t.getElapsedMs();  
+  times[1] = t.getElapsedMs();
   //printStuff (quickVec);
-  
+
   /*
   cout << "\n[";
   for (int e : quickVec)
     cout << " " << e;
   cout << " ]\n";
   */
-  
+
   cout << "timeMerge: " << times[0] << endl;
   cout << "timeQuick: " << times[1] << endl;
   cout << "timeStd  : " << times[3] << endl;
   cout << "shellVec  : " << times[2] << endl;
 
-  cout << endl << "Quick Equality:" <<( quickVec == stdVec); 
+  cout << endl << "Quick Equality:" <<( quickVec == stdVec);
   cout << endl;
-  cout << endl << "Shell Equality:" <<( shellVec == stdVec); 
+  cout << endl << "Shell Equality:" <<( shellVec == stdVec);
   cout << endl;
 
 
@@ -185,55 +185,58 @@ merge (vector<int>& s, iterator first, iterator mid, iterator last)
   std::copy (temp.begin (), temp.end (), perm_first);
 }
 
+iterator
+partition (iterator left, iterator right)
+{
+  iterator pivot_itr = findPivot(left, right);
+  const int pivot = *pivot_itr;
+  iterator i = left, j = pivot_itr;
+  while (true)
+  {
+    while (*++i < pivot )
+      ;
+    while (*--j > pivot )
+      ;
+    if (distance (i, j) <= 0) break;
+    std::iter_swap (i, j);
+  }
+  std::iter_swap (i, pivot_itr);
+  return i;
+}
+
 void
 quickSort (vector<int>& toSort, iterator left, iterator right)
 {
-  long d = distance (left, right);
-  if (d > 20)
+  if (distance (left, right) <= 20)
   {
-    const int pivot = *findPivot (toSort, left, right);
-    iterator i = left - 1, j = right - 1;
-    while (true)  
-    {
-      while (*++i < pivot ) 
-        ;
-      while ( *--j > pivot )
-        ;
-      if (distance (i, j) > 0)
-        std::iter_swap (i, j);
-      else
-        break;
-    }
-    std::iter_swap (i, right - 1);
-
-    quickSort (toSort, left, i);
-    quickSort (toSort, i, right);
-  } 
-  else 
     insertionSort (toSort, distance(toSort.begin(), left), distance(toSort.begin(), right));
+    return;
+  }
+  iterator mid = partition(left, right);
+  quickSort (toSort, left, mid);
+  quickSort (toSort, mid, right);
 }
 
 //returns iterator pointing to median value of first, last and the median of first & last
-iterator 
-findPivot (vector<int>& toSort, iterator left, iterator right)
+iterator
+findPivot (iterator left, iterator right)
 {
-  iterator center = left + (distance (left, right) / 2);
   --right;
+  iterator center = left + (distance (left, right) / 2);
   if (*center < *left)
     std::swap (*left, *center);
   if (*right < *left )
     std::swap (*left, *right);
   if (*right < *center)
     std::swap (*center, *right);
-  std::swap (*center, *right);
+  std::swap (*center, *--right);
   return right;
-
 }
 
 void
 insertionSort (vector<int>& toSort, size_t left, size_t right)
 {
-   iterator start = toSort.begin() + left; 
+   iterator start = toSort.begin() + left;
    iterator back = toSort.begin() + right;
    for (iterator front = start + 1; front != back; ++front)
    {
@@ -256,7 +259,7 @@ shellSort (vector<int>& toSort, iterator first, iterator last)
       h = 3 * h + 1;
     }
     size_t sortSize = distance(first,last);
-    //add d to toSort.begin() for subscripts from first to last 
+    //add d to toSort.begin() for subscripts from first to last
     size_t d = distance ( toSort.begin() , first);
     //for (size_t h = 1; h <= d/4; h=(h+3) * 3 )
     for (size_t gap = sortSize / 2; gap > 0; gap /= 2)
@@ -271,4 +274,3 @@ shellSort (vector<int>& toSort, iterator first, iterator last)
         }
     }
 }
- 
