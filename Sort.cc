@@ -2,8 +2,8 @@
   Filename   : Sort.cc
   Author     : Matt Fossett
   Course     : CSCI 362-01
-  Assignment : N/A
-  Description: Test methods of the List class
+  Assignment : Sort 
+  Description: Sort vectors using merge/quick/shell sort. 
 
   Table of Results
 
@@ -14,6 +14,10 @@
   Shell    5332.00 (1886297903)  12148.60 (4312522006)  27986.28 (9442491664)
   std      1117.32                2249.43                5351.19
 
+  My sorts show that quick sort is obviously much faster than merge and shell, 
+  this is likely due to teh efficiency of the divide and conquer strategy and 
+  less comparisons. Shell sort has more comparisons than merge sort but I believe 
+  it is faster because merge has to unload elements in a seperate temp vector. 
 */
 /************************************************************/
 // System includes
@@ -142,6 +146,9 @@ randomNumber (vector<int>& toSort)
     toSort.push_back (dist (random));
 }
 
+// Perform a merge sort on 'v'
+// Return the number of comparisons performed
+// Additionally, you'll want a helper function to allow for recursion
 size_t
 mergeSort (vector<int>& v)
 {
@@ -221,6 +228,9 @@ partition (iterator left, iterator right)
   return i;
 }
 
+// Perform a quicksort on 'v'
+// Return the number of comparisons performed
+// Additionally, you'll want a helper function to allow for recursion
 size_t
 quickSort (vector<int>& v)
 {
@@ -258,6 +268,8 @@ findPivot (iterator left, iterator right)
   return right;
 }
 
+// Perform an insertion sort from 'begin' up to but NOT including 'end'
+// Return the number of comparisons performed
 size_t
 insertionSort (vector<int>& toSort, size_t left, size_t right)
 {
@@ -280,6 +292,8 @@ insertionSort (vector<int>& toSort, size_t left, size_t right)
     return count;
 }
 
+// Perform a Shell sort 
+// Return the number of comparisons performed
 size_t
 shellSort (vector<int>& v)
 {
